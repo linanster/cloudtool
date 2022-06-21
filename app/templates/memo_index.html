@@ -1,0 +1,41 @@
+{% extends '_mybase.html' %}
+
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/my.css') }}">
+{% endblock styles %}
+
+{% block body %}
+    {{ super() }}
+    {#<a href="{{ url_for('blue_memo.edit') }}" onClick="alert('Love you, Boss Hu!')">new</a> #}
+    <a href="{{ url_for('blue_memo.edit') }}">new</a>
+    <br>
+    <table border="1">
+      <tr>
+        <th width="30">#</th>
+        <th width="120">time</th>
+        <th width="200">type</th>
+        <th width="600">summary</th>
+        <th width="100" align="center">author</th>
+        <th width="100">operation</th>
+      </tr>
+      {% for record in records %}
+        <tr>
+          <td title="id:{{record.id}}">{{ loop.index + pagination.skip }}</td>
+          <td title="{{record.time}}" style="text-align:center;">{{ record.time|fetch_day }}</td>
+          <td>{{ record.type.name }}</td>
+          <td>{{ record.summary }}</td>
+          <td>{{ record.author }}</td>
+          <td>
+            <a href="{{ url_for('blue_memo.edit', recordid=record.id, page=page) }}">detail</a>&nbsp;
+            {#<a href="{{ url_for('blue_memo.cmd_delete', recordid=record.id, page=page) }}" onClick="return confirm('confirm delete {{record.summary}}?')">delete</a>#}
+            <form id={{record.id}} action="{{ url_for('blue_memo.cmd_delete', recordid=record.id, page=page) }}" method="post" style="display:inline">
+              <a href="javascript:document.getElementById({{record.id}}).submit();" onClick="return confirm('confirm delete  ={{record.summary}}= ?')">delete</a>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+    <div style="display:inline">{{ pagination.links }}</div>
+    <div style="display:inline">{{ pagination.info }}</div>
+{% endblock body %}

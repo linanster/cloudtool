@@ -1,0 +1,15 @@
+[Unit]
+Description=CloudTool Main Service
+
+[Service]
+Type=forking
+ExecStart=/git/cloudtool/run.sh --start
+ExecReload=
+ExecStop=/git/cloudtool/run.sh --stop
+Restart=on-failure
+RestartSec=42s
+
+[Install]
+WantedBy=multi-user.target
+WantedBy=graphical.target
+

@@ -1,0 +1,54 @@
+{% extends '_mybase.html' %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('static',filename='js/my.js') }}" type="text/javascript"></script>
+{% endblock scripts %}
+
+{% block body %}
+    {{ super() }}
+    {# when new, recordid like this: #}
+    {# "POST /memo/cmd_save/?recordid=&page= HTTP/1.1" #}
+    <form action="{{ url_for('blue_memo.cmd_save', recordid=recordid, page=page) }}", method="post">
+      event type: 
+      <br>
+      <select name="typecode">
+        {% for memotype in get_memotypes() %}
+          <option value={{ memotype.code }} {% if typecode == memotype.code %}selected{% endif %}>{{ memotype.name }}</option>
+        {% endfor %}
+      </select>
+      <br>
+      <br>
+      event summary:
+      <br>
+      <textarea rows="1" cols="80" name="summary" maxlength="500" style="resize:none; overflow:hidden">{% if summary %}{{summary}}{% endif %}</textarea>
+      <br>
+      <br>
+      author:
+      <br>
+      <textarea rows="1" cols="20" name="author" maxlength="50" style="resize:none; overflow:hidden" disabled="disabled">{% if author %}{{author}}{% endif %}</textarea>
+      <br>
+      <br>
+      event comment:
+      <br>
+      <textarea rows="10" cols="100" name="comment" maxlength="2000">{% if comment %}{{comment}}{% endif %}</textarea>
+      <br>
+      <br>
+      <button type="submit">submit</button>
+      <button type="reset">reset</button>
+      <br>
+      <br>
+    </form>
+      <a href="{{ url_for('blue_memo.index', page=page) }}" style="display:inline">return</a>
+      {% if recordid %}
+        {#<a href="{{ url_for('blue_memo.cmd_delete', recordid=recordid, page=page) }}" onClick="return confirm('confirm delete?')">delete</a> | #}
+        <form id="form2" action="{{ url_for('blue_memo.cmd_delete', recordid=recordid, page=page) }}" method="post" style="display:inline">
+           | <a href="javascript:document.getElementById('form2').submit();" onClick="return confirm('confirm delete ={{summary}}= ?')">delete</a>
+        </form>
+      {% endif %}
+    <br>
+    <br>
+    {% if recordid %}
+      {% include '_filezella.html' %}
+    {% endif %}
+{% endblock body %}
