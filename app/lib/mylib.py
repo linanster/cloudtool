@@ -1,8 +1,8 @@
 from flask import request, session
 from functools import wraps
-
+#
 from app.lib.mylogger import logger
-
+#
 def afterrequestlog(func):
     @wraps(func)
     def inner(response):

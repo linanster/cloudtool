@@ -14,6 +14,30 @@ def env():
     envinfo()
 
 @manager.command
+def createdb_sqlite(table=False, data=False):
+    "--table --data"
+    from app.models.sqlite import db_sqlite, User
+    if table:
+        db_sqlite.create_all(bind='sqlite_user_user')
+        print('==create sqlite tables==: user')
+    if data:
+        User.seed()
+        print('==initialize sqlite data==')
+
+@manager.command
+def deletedb_sqlite(table=False, data=False):
+    "--table --data"
+    from app.models.sqlite import db_sqlite, User
+    if table:
+        db_sqlite.drop_all(bind='sqlite_user_user')
+        print('==delete sqlite tables==')
+        return
+    if data:
+        User.query.delete()
+        db_sqlite.session.commit()
+        print('==delete sqlite data==')
+
+@manager.command
 def createdb_mysql(table=False, data=False):
     "--table --data"
     from app.models.mysql import db_mysql, ToolRecord

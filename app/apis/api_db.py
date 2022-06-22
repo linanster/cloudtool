@@ -1,9 +1,10 @@
 from flask import request, abort
 from flask_restful import Api, Resource, fields, marshal_with, marshal, reqparse
 from sqlalchemy import and_
-
+#
 from app.models.mysql import ToolRecord
-
+from app.lib.myauth import my_login_required
+#
 api_db = Api(prefix='/api/db/')
 
 
@@ -49,6 +50,7 @@ parser.add_argument('content', type=str, required=False, help='content required'
 class ResourceToolRecord(Resource):
 
     @marshal_with(fields_toolrecord_response)
+    # @my_login_required
     def get(self):
         args = parser.parse_args()
         date_time = args.get('date_time')
@@ -61,6 +63,7 @@ class ResourceToolRecord(Resource):
         return response_obj
 
     @marshal_with(fields_toolrecord_response)
+    # @my_login_required
     def post(self):
         args = parser.parse_args()
         date_time = args.get('date_time')
@@ -78,6 +81,7 @@ class ResourceToolRecord(Resource):
         return response_obj
         
     @marshal_with(fields_toolrecord_response)
+    # @my_login_required
     def delete(self):
         args = parser.parse_args()
         date_time = args.get('date_time')
@@ -93,6 +97,7 @@ class ResourceToolRecord(Resource):
 class ResourceToolRecords(Resource):
 
     @marshal_with(fields_toolrecords_response)
+    # @my_login_required
     def get(self):
         args = parser.parse_args()
         date_time_start = args.get('date_time_start')

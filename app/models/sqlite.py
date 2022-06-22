@@ -1,5 +1,8 @@
+import uuid
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
+#
+from app.ext.cache import cache
 #
 db_sqlite = SQLAlchemy(use_native_unicode='utf8')
 
@@ -28,7 +31,7 @@ class User(UserMixin, MyBaseModel):
     __tablename__ = 'user'
     username = db_sqlite.Column(db_sqlite.String(100), nullable=False, unique=True, index=True)
     _password = db_sqlite.Column(db_sqlite.String(256), nullable=False)
-    def __init__(self, username='nousername', password='nopassword'):
+    def __init__(self, username, password):
         self.username = username
         self._password = password
 
@@ -43,6 +46,20 @@ class User(UserMixin, MyBaseModel):
 
     def verify_password(self, password):
         return self._password == password
+
+    def generate_auth_token(self, expire=600):
+        token = uuid.uuid4().hex
+        cache.set(token, self.id, timeout=expire)
+        return token
+
+    @staticmethod
+    def verify_auth_token(token):
+        try:
+            userid = cache.get(token)
+        except:
+            return None
+        return User.query.get(userid)
+
 
     @staticmethod
     def seed():
