@@ -86,7 +86,10 @@ class ResourceToolRecord(Resource):
         args = parser.parse_args()
         date_time = args.get('date_time')
         item = ToolRecord.query.filter(ToolRecord.date_time == date_time).first()
-        item.delete()
+        # item.delete()
+        item.colorcode = 0
+        item.content = ''
+        item.save()
         response_obj = {
             'status': 200,
             'msg': 'delete record success',
