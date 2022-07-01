@@ -8,9 +8,9 @@ from app.models.sqlite import User
 def my_login_required(func):
     @wraps(func)
     def inner(*args, **kwargs):
-        username = request.form.get('username') or request.args.get('username') or request.headers.get('username')
-        password = request.form.get('password') or request.args.get('password') or request.headers.get('password')
-        token = request.form.get('token') or request.args.get('token') or request.headers.get('token')
+        token = request.headers.get('access_token')
+        username = request.headers.get('username') or request.json.get('username') if request.json else None
+        password = request.headers.get('password') or request.json.get('password') if request.json else None
 
         # 1. first try to authenticate by token
         user = User.verify_auth_token(token)
@@ -18,7 +18,7 @@ def my_login_required(func):
             # 2. try to authenticate with username/password
             user = User.query.filter_by(username = username).first()
             if not user or not user.verify_password(password):
-                abort(401, status='401', msg='authentication failed')
+                abort(401, code = 401, msg = 'authentication failed')
         g.user = user
         return func(*args, **kwargs)
     return inner

@@ -30,13 +30,17 @@ class MyBaseModel(db_mysql.Model):
 class ToolRecord(MyBaseModel):
     __bind_key__ = 'mysql_gecloudtool_toolrecord'
     __tablename__ = 'toolrecord'
-    # date_time = db_mysql.Column(db_mysql.DateTime, nullable=False)
-    date_time = db_mysql.Column(db_mysql.Date, nullable=False)
-    colorcode = db_mysql.Column(db_mysql.Integer, nullable=False)
+    # card_date = db_mysql.Column(db_mysql.DateTime, nullable=False)
+    card_date = db_mysql.Column(db_mysql.Date, nullable=False)
+    create_time = db_mysql.Column(db_mysql.DateTime, nullable=False)
+    update_time = db_mysql.Column(db_mysql.DateTime, nullable=False)
+    typecode = db_mysql.Column(db_mysql.Integer, nullable=False)
     content = db_mysql.Column(db_mysql.String(500), nullable=False)
-    def __init__(self, date_time, colorcode, content):
-        self.date_time = date_time
-        self.colorcode = colorcode
+    def __init__(self, card_date, create_time, update_time, typecode, content):
+        self.card_date = card_date
+        self.create_time = create_time
+        self.update_time = update_time
+        self.typecode = typecode
         self.content = content
     @staticmethod
     def seed():
@@ -44,11 +48,13 @@ class ToolRecord(MyBaseModel):
         date_obj_start = datetime.strptime('2022-01-01', '%Y-%m-%d')
         items = []
         for i in range(365):
-            # date_time = (date_obj_start + timedelta(i, 0, 0)).strftime('%Y-%m-%d')
-            date_time = date_obj_start + timedelta(i, 0, 0)
-            colorcode = random.choice([1, 2, 3, 4])
+            # card_date = (date_obj_start + timedelta(i, 0, 0)).strftime('%Y-%m-%d')
+            card_date = date_obj_start + timedelta(i, 0, 0)
+            create_time = datetime.now()
+            update_time = datetime.now()
+            typecode = random.choice([1, 2, 3, 4])
             content = reduce(lambda x,y: x+y, random.choices(p, k=random.randint(10, 140)))
-            items.append(ToolRecord(date_time, colorcode, content))
+            items.append(ToolRecord(card_date, create_time, update_time, typecode, content))
         db_mysql.session.add_all(items)
         db_mysql.session.commit()
 
