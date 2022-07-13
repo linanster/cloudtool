@@ -47,7 +47,7 @@ class User(UserMixin, MyBaseModel):
     def verify_password(self, password):
         return self._password == password
 
-    def generate_auth_token(self, expire=600):
+    def generate_auth_token(self, expire=86400):
         token = uuid.uuid4().hex
         cache.set(token, self.id, timeout=expire)
         return token
