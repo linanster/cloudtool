@@ -3,6 +3,7 @@ from flask_restful import abort
 from functools import wraps
 #
 from app.models.sqlite import User
+from app.ext.cache import cache
 #
 # this is decorator
 def my_login_password_required(func):
@@ -24,10 +25,14 @@ def my_login_token_required(func):
     @wraps(func)
     def inner(*args, **kwargs):
         token = request.headers.get('access_token')
-
         user = User.verify_auth_token(token)
         if not user:
             abort(401, code = 3, msg = 'error: token invalid or expired')
+        #### code for single login restriction ####
+        token_latest = cache.get(str(user.id))
+        if token != token_latest:
+            abort(401, code = 4, msg = 'error: token refreshed by other side')
+        ########
         g.user = user
         return func(*args, **kwargs)
     return inner

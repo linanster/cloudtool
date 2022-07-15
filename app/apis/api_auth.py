@@ -1,3 +1,4 @@
+import traceback
 from flask import request, abort, jsonify, url_for, g
 from flask_restful import Api, Resource, fields, marshal_with, marshal, reqparse
 #
@@ -20,9 +21,10 @@ class ResourceToken(Resource):
                 'duration': cache.config.get('CACHE_DEFAULT_TIMEOUT')
             }
         except:
+            traceback.print_exc()
             return {
-                'code': 1,
-                'msg': 'request token error'
+                'code': 10,
+                'msg': 'unknown error'
             }
     
 api_auth.add_resource(ResourceToken, '/token')

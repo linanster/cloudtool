@@ -51,6 +51,9 @@ class User(UserMixin, MyBaseModel):
     def generate_auth_token(self, expire=cache_expiration):
         token = uuid.uuid4().hex
         cache.set(token, self.id, timeout=expire)
+        #### code for single login restriction ####
+        cache.set(str(self.id), token, timeout=expire)
+        ########
         return token
 
     @staticmethod
@@ -58,6 +61,8 @@ class User(UserMixin, MyBaseModel):
         try:
             userid = cache.get(token)
         except:
+            return None
+        if userid is None:
             return None
         return User.query.get(userid)
 
