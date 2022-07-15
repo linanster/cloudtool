@@ -5,3 +5,5 @@ uploadfolder = os.path.abspath(os.path.join(topdir, "upload"))
 logfolder = os.path.abspath(os.path.join(topdir, "log"))
 staticfolder = os.path.abspath(os.path.join(topdir, 'app', 'static'))
 cachefolder = os.path.abspath(os.path.join(topdir, "cache"))
+
+cache_expiration = 86400

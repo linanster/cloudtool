@@ -5,7 +5,7 @@ from flask_restful import Api, Resource, fields, marshal_with, marshal, reqparse
 from sqlalchemy import and_
 #
 from app.models.mysql import ToolRecord
-from app.lib.myauth import my_login_required
+from app.lib.myauth import my_login_token_required
 #
 api_db = Api(prefix='/api/db/')
 
@@ -55,7 +55,7 @@ parser.add_argument('content', type=str, required=False, help='content required'
 class ResourceToolRecord(Resource):
 
     @marshal_with(fields_toolrecord_response)
-    @my_login_required
+    @my_login_token_required
     def get(self, id):
         try:
             item = ToolRecord.query.get(id)
@@ -81,7 +81,7 @@ class ResourceToolRecord(Resource):
         return response
 
     @marshal_with(fields_toolrecord_response)
-    @my_login_required
+    @my_login_token_required
     def post(self):
         try:
             args = parser.parse_args()
@@ -115,7 +115,7 @@ class ResourceToolRecord(Resource):
         return response
         
     @marshal_with(fields_toolrecord_response)
-    @my_login_required
+    @my_login_token_required
     def put(self, id):
         try:
             args = parser.parse_args()
@@ -142,7 +142,7 @@ class ResourceToolRecord(Resource):
         return response
 
     @marshal_with(fields_toolrecord_response)
-    @my_login_required
+    @my_login_token_required
     def delete(self, id):
         try:
             item = ToolRecord.query.get(id)
@@ -164,7 +164,7 @@ class ResourceToolRecord(Resource):
 class ResourceToolRecords(Resource):
 
     @marshal_with(fields_toolrecords_response)
-    @my_login_required
+    @my_login_token_required
     def get(self):
         try:
             args = parser.parse_args()

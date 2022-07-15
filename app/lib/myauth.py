@@ -5,6 +5,33 @@ from functools import wraps
 from app.models.sqlite import User
 #
 # this is decorator
+def my_login_password_required(func):
+    @wraps(func)
+    def inner(*args, **kwargs):
+        username = request.headers.get('username') or request.json.get('username') if request.json else None
+        password = request.headers.get('password') or request.json.get('password') if request.json else None
+
+        user = User.query.filter_by(username = username).first()
+        if not user:
+            abort(401, code = 1, msg = 'error: user not found')
+        if not user.verify_password(password):
+            abort(401, code = 2, msg = 'error: invalid password')
+        g.user = user
+        return func(*args, **kwargs)
+    return inner
+
+def my_login_token_required(func):
+    @wraps(func)
+    def inner(*args, **kwargs):
+        token = request.headers.get('access_token')
+
+        user = User.verify_auth_token(token)
+        if not user:
+            abort(401, code = 3, msg = 'error: token invalid or expired')
+        g.user = user
+        return func(*args, **kwargs)
+    return inner
+
 def my_login_required(func):
     @wraps(func)
     def inner(*args, **kwargs):
@@ -22,4 +49,3 @@ def my_login_required(func):
         g.user = user
         return func(*args, **kwargs)
     return inner
-

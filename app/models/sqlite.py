@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 #
 from app.ext.cache import cache
+from app.myglobals import cache_expiration
 #
 db_sqlite = SQLAlchemy(use_native_unicode='utf8')
 
@@ -47,7 +48,7 @@ class User(UserMixin, MyBaseModel):
     def verify_password(self, password):
         return self._password == password
 
-    def generate_auth_token(self, expire=86400):
+    def generate_auth_token(self, expire=cache_expiration):
         token = uuid.uuid4().hex
         cache.set(token, self.id, timeout=expire)
         return token
