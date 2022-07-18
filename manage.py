@@ -61,6 +61,20 @@ def deletedb_mysql(table=False, data=False):
         db_mysql.session.commit()
         print('==delete mysql datas==')
 
+@manager.command
+def refresh_auth():
+    'load users from config'
+    from app.models.sqlite import db_sqlite, User
+    from app.config.userlist import users
+    User.query.delete()
+    print('==delete old data==')
+    newusers = []
+    for username, password in users:
+        db_sqlite.session.add(User(username, password))
+        newusers.append(username)
+    db_sqlite.session.commit()
+    print('==load users from config==')
+    print(newusers)
 
 # python3 manage.py runserver -h 0.0.0.0 -p 5000 -r -d
 if __name__ == '__main__':

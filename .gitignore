@@ -20,6 +20,7 @@ upload/*
 
 # 3.ignore specified file
 scripts/testapi/1.data
+config/userlist.py
 
 # 4.exceptions that not ignore
 !logs/.gitkeep
