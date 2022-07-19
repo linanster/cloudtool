@@ -69,9 +69,9 @@ def refresh_auth():
     User.query.delete()
     print('==delete old data==')
     newusers = []
-    for username, password in users:
-        db_sqlite.session.add(User(username, password))
-        newusers.append(username)
+    for u in users:
+        db_sqlite.session.add(User(*u))
+        newusers.append(u[0])
     db_sqlite.session.commit()
     print('==load users from config==')
     print(newusers)

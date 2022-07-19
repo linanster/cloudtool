@@ -54,3 +54,12 @@ def my_login_required(func):
         g.user = user
         return func(*args, **kwargs)
     return inner
+
+def my_permission_required(required_permission):
+    def inner1(func):
+        def inner2(*args, **kwargs):
+            if not g.user.check_permission(required_permission):
+                abort(403, code = 5, msg = 'error: permission not sufficient')
+            return func(*args, **kwargs)
+        return inner2
+    return inner1

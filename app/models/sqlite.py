@@ -32,9 +32,11 @@ class User(UserMixin, MyBaseModel):
     __tablename__ = 'user'
     username = db_sqlite.Column(db_sqlite.String(100), nullable=False, unique=True, index=True)
     _password = db_sqlite.Column(db_sqlite.String(256), nullable=False)
-    def __init__(self, username, password):
+    _permission = db_sqlite.Column(db_sqlite.Integer, nullable=False)
+    def __init__(self, username, password, permission):
         self.username = username
         self._password = password
+        self._permission = permission
 
     @property
     def password(self):
@@ -56,6 +58,9 @@ class User(UserMixin, MyBaseModel):
         ########
         return token
 
+    def check_permission(self, permission):
+        return self._permission & permission == permission
+
     @staticmethod
     def verify_auth_token(token):
         try:
@@ -69,8 +74,8 @@ class User(UserMixin, MyBaseModel):
 
     @staticmethod
     def seed():
-        user1 = User('user1', '123456')
-        user2 = User('user2', '123456')
+        user1 = User('user1', '123456', 0b01)
+        user2 = User('user2', '123456', 0b11)
         seeds = [user1, user2]
         db_sqlite.session.add_all(seeds)
         db_sqlite.session.commit()
