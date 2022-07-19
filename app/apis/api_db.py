@@ -44,8 +44,8 @@ parser = reqparse.RequestParser()
 parser.add_argument('card_date', type=str, required=False, help='card_date required', location=['form', 'args', 'json'])
 parser.add_argument('card_date_start', type=str, required=False, help='card_date_start required', location=['form', 'args', 'json'])
 parser.add_argument('card_date_end', type=str, required=False, help='card_date_end required', location=['form', 'args', 'json'])
-parser.add_argument('typecode', type=int, required=False, help='typecode required', location=['form', 'args'])
-parser.add_argument('content', type=str, required=False, help='content required', location=['form', 'args'])
+parser.add_argument('typecode', type=int, required=False, help='typecode required', location=['form', 'args', 'json'])
+parser.add_argument('content', type=str, required=False, help='content required', location=['form', 'args', 'json'])
 
 ####################################
 ### 2. resource class definition ###
@@ -72,11 +72,12 @@ class ResourceToolRecord(Resource):
                     'msg': 'query single record error(no record)',
                     'data': None
                 }
-        except:
+        except Exception as e:
             response = {
-                'code': 1,
+                'code': 2,
                 'msg': 'query single record error',
                 'data': None,
+                'debug': str(e)
             }
             traceback.print_exc()
         return response
@@ -87,9 +88,9 @@ class ResourceToolRecord(Resource):
     def post(self):
         try:
             args = parser.parse_args()
-            card_date = args.get('card_date') or request.json.get('card_date')
-            typecode = args.get('typecode') or request.json.get('typecode')
-            content = args.get('content') or request.json.get('content')
+            card_date = args.get('card_date')
+            typecode = args.get('typecode')
+            content = args.get('content')
             create_time = datetime.now()
             update_time = datetime.now()
             item = ToolRecord.query.filter(ToolRecord.card_date == card_date).first()
@@ -107,11 +108,12 @@ class ResourceToolRecord(Resource):
                     'msg': 'insert record success',
                     'data': item,
                 }
-        except:
+        except Exception as e:
             response = {
-                'code': 1,
+                'code': 2,
                 'msg': 'insert record error',
                 'data': None,
+                'debug': str(e)
             }
             traceback.print_exc()
         return response
@@ -122,8 +124,8 @@ class ResourceToolRecord(Resource):
     def put(self, id):
         try:
             args = parser.parse_args()
-            typecode = args.get('typecode') or request.json.get('typecode')
-            content = args.get('content') or request.json.get('content')
+            typecode = args.get('typecode')
+            content = args.get('content')
             item = ToolRecord.query.get(id)
             update_time = datetime.now()
             item.typecode = typecode
@@ -135,11 +137,12 @@ class ResourceToolRecord(Resource):
                 'msg': 'update record success',
                 'data': item,
             }
-        except:
+        except Exception as e:
             response = {
                 'code': 1,
                 'msg': 'update record error',
-                'data': None
+                'data': None,
+                'debug': str(e)
             }
             traceback.print_exc()
         return response
@@ -156,11 +159,12 @@ class ResourceToolRecord(Resource):
                 'msg': 'delete record success',
                 'data': item,
             }
-        except:
+        except Exception as e:
             response = {
                 'code': 1,
                 'msg': 'delete record error',
                 'data': None,
+                'debug': str(e)
             }
             traceback.print_exc()
         return response
@@ -181,11 +185,12 @@ class ResourceToolRecords(Resource):
                 'msg': 'query multi records success',
                 'data': items,
             }
-        except:
+        except Exception as e:
             response = {
                 'code': 1,
                 'msg': 'query multi records error',
                 'data': None,
+                'debug': str(e)
             }
             traceback.print_exc()
         return response
