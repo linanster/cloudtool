@@ -66,8 +66,9 @@ def refresh_auth():
     'load users from config'
     from app.models.sqlite import db_sqlite, User
     from app.config.userlist import users
-    User.query.delete()
+    db_sqlite.drop_all(bind='sqlite_user_user')
     print('==delete old data==')
+    db_sqlite.create_all(bind='sqlite_user_user')
     newusers = []
     for u in users:
         db_sqlite.session.add(User(*u))
