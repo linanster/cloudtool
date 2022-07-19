@@ -9,8 +9,8 @@ from app.ext.cache import cache
 def my_login_password_required(func):
     @wraps(func)
     def inner(*args, **kwargs):
-        username = request.headers.get('username') or request.json.get('username') if request.json else None
-        password = request.headers.get('password') or request.json.get('password') if request.json else None
+        username = request.json.get('username')
+        password = request.json.get('password')
 
         user = User.query.filter_by(username = username).first()
         if not user:

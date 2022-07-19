@@ -3,13 +3,28 @@ from flask import request, abort, jsonify, url_for, g
 from flask_restful import Api, Resource, fields, marshal_with, marshal, reqparse
 #
 from app.models.sqlite import User
-from app.lib.myauth import my_login_password_required
+from app.lib.myauth import my_login_password_required, my_login_token_required
 from app.ext.cache import cache
 from app.myglobals import cache_expiration
 #
 api_auth = Api(prefix='/api/auth/')
 
 class ResourceToken(Resource):
+    @my_login_token_required
+    def get(self):
+        try:
+            return {
+                'code': 0,
+                'username': g.user.username,
+                'role': g.user.permission,
+            }
+        except Exception as e:
+            traceback.print_exc()
+            return {
+                'code': 1,
+                'msg': 'query user role error',
+                'debug': str(e),
+            }
     @my_login_password_required
     def post(self):
         try:
@@ -20,7 +35,8 @@ class ResourceToken(Resource):
                 'username':g.user.username,
                 'token': token if type(token) is str else token.decode('ascii'),
                 # 'duration': cache.config.get('CACHE_DEFAULT_TIMEOUT')
-                'duration': cache_expiration
+                'duration': cache_expiration,
+                'role': g.user.permission
             }
         except Exception as e:
             traceback.print_exc()
@@ -29,6 +45,7 @@ class ResourceToken(Resource):
                 'msg': 'unknown error',
                 'debug': str(e)
             }
+
     
 api_auth.add_resource(ResourceToken, '/token')
 

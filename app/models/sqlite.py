@@ -32,11 +32,11 @@ class User(UserMixin, MyBaseModel):
     __tablename__ = 'user'
     username = db_sqlite.Column(db_sqlite.String(100), nullable=False, unique=True, index=True)
     _password = db_sqlite.Column(db_sqlite.String(256), nullable=False)
-    _permission = db_sqlite.Column(db_sqlite.Integer, nullable=False)
+    permission = db_sqlite.Column(db_sqlite.Integer, nullable=False)
     def __init__(self, username, password, permission):
         self.username = username
         self._password = password
-        self._permission = permission
+        self.permission = permission
 
     @property
     def password(self):
@@ -59,7 +59,7 @@ class User(UserMixin, MyBaseModel):
         return token
 
     def check_permission(self, permission):
-        return self._permission & permission == permission
+        return self.permission & permission == permission
 
     @staticmethod
     def verify_auth_token(token):
